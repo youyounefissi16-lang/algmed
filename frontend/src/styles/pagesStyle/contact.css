@@ -1,0 +1,98 @@
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-form label {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-dark);
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-family: var(--font-family);
+  background: var(--card-bg);
+  color: var(--text-dark);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--teal-accent);
+  box-shadow: 0 0 0 3px rgba(193, 255, 48, 0.12);
+}
+
+.contact-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contact-form .submit-button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--action-from), var(--action-to));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  align-self: flex-start;
+}
+
+.contact-form .submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--action-from) 32%, transparent);
+}
+
+.contact-form .submit-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.contact-form .error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.contact-form .success {
+  color: var(--color-success);
+  font-size: var(--text-sm);
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .contact-form input,
+  .contact-form textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  .contact-form .submit-button {
+    width: 100%;
+    padding: 12px 24px;
+    min-height: 44px;
+    align-self: stretch;
+    text-align: center;
+  }
+}

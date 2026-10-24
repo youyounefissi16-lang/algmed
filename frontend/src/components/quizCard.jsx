@@ -1,0 +1,422 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { API_BASE_URL, fetchWithAuth } from '../config/api';
+import { openFileInNewTab } from '../utils/openFile';
+import { safeReturnPath } from '../utils/routeReturn';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FaFilePdf } from 'react-icons/fa';
+import { useToast } from './Toast.jsx';
+import { useSound } from '../context/SoundContext';
+import { useTranslation } from '../context/LanguageContext';
+import { SkeletonQuizItem } from './LoadingSkeleton';
+import { logger } from '../utils/logger';
+import '../styles/teal-theme.css';
+
+const QuizCard = () => {
+  const location     = useLocation();
+  const state        = location.state;
+  const backTo       = safeReturnPath(state?.from, '/quizPage');
+  const { id }       = useParams();
+  const navigate     = useNavigate();
+  const notify = useToast();
+  const play = useSound();
+  const { t } = useTranslation();
+
+  const [quizData, setQuizData]   = useState(
+    state ? { quizId: state.quizId, quizName: state.quizName, tags: state.tags || [], question: state.question, caseId: state.caseId || null, course: state.course || '', moduleId: state.moduleId || null } : null
+  );
+  const [loading, setLoading]     = useState(!state);
+  const [selected, setSelected]   = useState([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [result, setResult]       = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [elapsed, setElapsed]     = useState(0);
+  const [, setTimerActive] = useState(false);
+  const [subscription, setSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [pdfMap, setPdfMap]       = useState({});
+  const [moduleCourses, setModuleCourses] = useState(null);
+  const submittingRef = useRef(false);
+  const handleSubmitRef = useRef(null);
+
+  const studyMode = state?.studyMode || false;
+
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    if (!quizData?.question?.options) { setOptions([]); return; }
+    const opts = [...quizData.question.options];
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+    }
+    setOptions(opts);
+  }, [quizData?.question?.options]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/payments/subscription`);
+        if (res.ok) { const d = await res.json(); setSubscription(d.subscription); }
+      } catch { logger.error({}, 'quizCard fetchSubscription failed') }
+      finally { setSubscriptionLoading(false); }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/pdf-documents`);
+        if (res.ok) {
+          const docs = await res.json();
+          const map = {};
+          docs.forEach((d) => { map[d.pdfId] = d.filename; });
+          setPdfMap(map);
+        }
+      } catch { /* pdf map not available */ }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const mid = quizData?.moduleId;
+    if (!mid) return;
+    (async () => {
+      try {
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/modules/${mid}`);
+        if (res.ok) {
+          const mod = await res.json();
+          setModuleCourses(mod.courses || []);
+        }
+      } catch { /* module courses not available */ }
+    })();
+  }, [quizData?.moduleId]);
+
+  useEffect(() => {
+    if (quizData) return;
+    if (!id) { navigate(backTo); return; }
+
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/quizzes/${id}`, { signal: controller.signal });
+        if (!res.ok) throw new Error('Quiz not found');
+        const data = await res.json();
+        if (controller.signal.aborted) return;
+        setQuizData({
+          quizId:   data._id,
+          quizName: data.question?.questionText || data.quizId,
+          tags: data.tags || [],
+          question: {
+            questionText: data.question?.questionText,
+            options:      data.question?.options || [],
+          },
+          caseId: data.caseId || null,
+          course: data.course || '',
+          moduleId: data.moduleId || null,
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') { logger.error({ err, quizId: id }, 'QuizCard fetch failed'); notify(t('quizcard.notFound'), 'error'); play('navigate'); navigate(backTo); }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+    return () => controller.abort();
+  }, [id]);
+
+  useEffect(() => {
+    if (studyMode || submitted) { setTimerActive(false); return; }
+    setTimerActive(true);
+    let id = setInterval(() => setElapsed((p) => p + 1), 1000);
+    const handleVisibility = () => {
+      if (document.hidden) {
+        clearInterval(id);
+      } else {
+        id = setInterval(() => setElapsed((p) => p + 1), 1000);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [studyMode, submitted]);
+
+  const startQuizSession = useCallback(async () => {
+    if (!quizData?.quizId) return;
+    try {
+      await fetchWithAuth(`${API_BASE_URL}/api/quizzes/${quizData.quizId}/start`, {
+        method: 'POST',
+        body: { timer: 0 },
+      });
+    } catch (err) {
+      logger.error({ err, quizId: quizData.quizId }, 'startQuizSession failed');
+    }
+  }, [quizData?.quizId]);
+
+  useEffect(() => {
+    if (quizData?.quizId && !studyMode) startQuizSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizData?.quizId, studyMode]);
+
+  const toggleOption = (opt) => {
+    if (submitted) return;
+    play('select');
+    if (studyMode) {
+      setSelected([opt]);
+      handleStudyCheck(opt);
+      return;
+    }
+    setSelected((prev) =>
+      prev.includes(opt) ? prev.filter((a) => a !== opt) : [...prev, opt]
+    );
+  };
+
+  const handleStudyCheck = async (opt) => {
+    setSubmitting(true);
+    try {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/quizzes/${quizData.quizId}/submit`, {
+        method: 'POST',
+        body: { selectedAnswers: [opt] },
+      });
+      if (!res.ok) throw new Error(t('quizcard.error.verify'));
+      const data = await res.json();
+      setResult(data);
+      setSubmitted(true);
+      play(data.correct ? 'success' : 'error');
+    } catch (err) {
+      logger.error({ err, quizId: quizData?.quizId, opt }, 'QuizCard studyCheck failed');
+      notify(t('quizcard.error.verify'), 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (submitted || submittingRef.current) return;
+    if (selected.length === 0) return notify(t('quizcard.warning.select'), 'warning');
+    play('submit');
+    submittingRef.current = true;
+    setSubmitting(true);
+    setTimerActive(false);
+    try {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/quizzes/${quizData.quizId}/submit`, {
+        method: 'POST',
+        body: { selectedAnswers: selected },
+      });
+      if (!res.ok) throw new Error(t('quizcard.error.submit'));
+      const data = await res.json();
+      setResult(data);
+      setSubmitted(true);
+      play(data.correct ? 'success' : 'error');
+    } catch (err) {
+      logger.error({ err, quizId: quizData?.quizId }, 'QuizCard submit failed');
+      notify(t('quizcard.error.submitRetry'), 'error');
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
+  };
+  handleSubmitRef.current = handleSubmit;
+
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  if (loading || subscriptionLoading) return <div className="page-teal"><div className="card-teal"><SkeletonQuizItem count={1} /></div></div>;
+  if (!quizData?.question) return <div className="page-teal"><div className="card-teal" style={{ textAlign: 'center' }}>{t('quizcard.notFound')}</div></div>;
+  const isSubActive = subscription?.status === 'active' && (!subscription.endDate || new Date(subscription.endDate) > new Date());
+  if (!isSubActive) {
+    return (
+      <div className="page-teal">
+        <div className="card-teal" style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <div className="gate-banner" style={{ marginBottom: 0, background: 'transparent', border: 'none' }}>
+            <div className="gate-icon">&#128274;</div>
+            <h3>{t('quizcard.subscription.title')}</h3>
+            <p>
+              {t('quizcard.subscription.desc')}
+            </p>
+            <div className="gate-cta">
+              <button className="btn-primary" onClick={() => navigate('/pricing')}>{t('quizcard.subscription.cta')}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { quizName, question } = quizData;
+  const isMulti = !result
+    ? (quizData?.question?.correctAnswers?.length || 0) > 1
+    : (result.correctAnswers?.length || 1) > 1;
+
+  return (
+    <div className="page-teal">
+      <div className="quiz-container-teal">
+        <div className="quiz-flex-header">
+          {quizName && quizName !== question?.questionText && <h2>{quizName}</h2>}
+          {!studyMode && (
+            <span className="timer-badge timer-running" style={{
+              color: 'var(--text-dark)',
+            }}>
+              ⏱ {formatTime(elapsed)}
+            </span>
+          )}
+        </div>
+
+        {quizData.tags && quizData.tags.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+            {quizData.tags.map((tag, i) => (
+              <span key={i} style={{ padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: 'rgba(251,146,60,0.1)', color: '#ea580c' }}>{tag}</span>
+            ))}
+          </div>
+        )}
+
+        {studyMode && <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-light)', marginBottom: '10px' }}>🔍 {t('quizcard.studyMode')}</div>}
+
+        {quizData.caseId && typeof quizData.caseId === 'object' && (
+          <div className="case-box">
+            <div className="case-box-label">
+              📋 {t('caseExam.caseLabel')} — {quizData.caseId.title || ''}
+            </div>
+            <p>
+              {quizData.caseId.description || ''}
+            </p>
+          </div>
+        )}
+
+        <p style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '16px', color: 'var(--text-dark)' }}>
+          {question.questionText}
+        </p>
+
+        {isMulti && !submitted && !studyMode && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-light)', marginBottom: '10px' }}>
+            {t('quizcard.selectAll')}
+          </p>
+        )}
+
+        {options.map((opt, i) => {
+          let optClass = 'option-label';
+          if (submitted) {
+            const isCorrectAnswer = result?.correctAnswers?.includes(opt);
+            const isSelected = selected.includes(opt);
+            if (isCorrectAnswer && isSelected) optClass += ' correct';
+            else if (!isCorrectAnswer && isSelected) optClass += ' incorrect';
+            else if (isCorrectAnswer && !isSelected) optClass += ' partial';
+          } else if (selected.includes(opt)) {
+            optClass += ' selected';
+          }
+
+          return (
+            <label key={i} className={optClass}
+              style={{ cursor: submitted ? 'default' : 'pointer' }}>
+              <input type="checkbox" checked={selected.includes(opt)}
+                onChange={() => toggleOption(opt)} disabled={submitted} />
+              {opt}
+            </label>
+          );
+        })}
+
+        {options.length === 0 && !submitted && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-light)', marginBottom: '10px' }}>
+            {t('quizcard.noOptions')}
+          </p>
+        )}
+
+        {submitted && result && (
+          <div className={`result-box ${result.correct ? 'pass' : (result.partialScore > 0 ? 'partial' : 'fail')}`}>
+            <p className="result-box-title">
+              {result.correct ? `✅ ${t('customExam.correct')}` : (result.partialScore > 0 ? `⚠️ ${t('customExam.partial')}` : `❌ ${t('customExam.incorrect')}`)}
+            </p>
+            <p className="result-box-time">
+              ⏱ {t('customExam.timeTaken', { time: formatTime(elapsed) })}
+            </p>
+            {!result.correct && (
+              <p className="result-box-answer">
+                <strong>{result.correctAnswers?.length > 1 ? t('quizcard.correctAnswers') : t('quizcard.correctAnswer')} :</strong>{' '}
+                {result.correctAnswers?.join(', ')}
+              </p>
+            )}
+            {result.explanation && (
+              <div className="explanation-box">
+                <strong>💡 {t('quizcard.explanation')} :</strong> {result.explanation}
+              </div>
+            )}
+            {result.optionExplanations && result.optionExplanations.length > 0 && (
+              <div className="explanation-box" style={{ marginTop: 8 }}>
+                <strong style={{ display: 'block', marginBottom: 6 }}>{t('admin.quiz.optionExplanations', 'Pourquoi chaque option est vraie/fausse')}</strong>
+                {result.optionExplanations.map((expl) => (
+                  <div key={expl.letter} style={{ marginBottom: 6, paddingLeft: 8, borderLeft: '3px solid var(--teal-dark, #4F6BFF)' }}>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{expl.letter}.</div>
+                    {expl.whyTrue && <div style={{ fontSize: 12, color: '#16a34a' }}>✓ {expl.whyTrue}</div>}
+                    {expl.whyFalse && <div style={{ fontSize: 12, color: '#dc2626' }}>✗ {expl.whyFalse}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {result.keyConcepts && result.keyConcepts.length > 0 && (
+              <div className="explanation-box" style={{ marginTop: 8 }}>
+                <strong style={{ display: 'block', marginBottom: 4 }}>{t('admin.quiz.keyConcepts', 'Concepts clés')}</strong>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {result.keyConcepts.map((c, i) => (
+                    <span key={i} style={{ padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600, background: 'color-mix(in srgb, var(--action-from) 8%, transparent)', color: 'var(--teal-dark, #4F6BFF)' }}>{c}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {result.commonTraps && result.commonTraps.length > 0 && (
+              <div className="explanation-box" style={{ marginTop: 8 }}>
+                <strong style={{ display: 'block', marginBottom: 4 }}>{t('admin.quiz.commonTraps', 'Pièges fréquents')}</strong>
+                <ul style={{ margin: 0, paddingLeft: 18 }}>
+                  {result.commonTraps.map((trap, i) => (
+                    <li key={i} style={{ fontSize: 12, marginBottom: 2, color: '#dc2626' }}>{trap}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {submitted && quizData.course && (
+          (() => {
+            const match = (moduleCourses || quizData.moduleId?.courses || []).find(
+              (c) => (typeof c === 'string' ? c : c.name || '') === quizData.course
+            );
+            const pdfId = match && typeof match === 'object' ? match.pdfId || '' : '';
+            const pdfFilename = pdfId ? pdfMap[pdfId] : null;
+            const handleOpenPdf = async () => {
+              if (!pdfFilename) { notify(t('quizcard.courseNotAvailable'), 'warning'); return; }
+              const ok = await openFileInNewTab(`/api/course-pdfs/${encodeURIComponent(pdfFilename)}/content`);
+              if (!ok) notify(t('quizcard.error.network'), 'error');
+            };
+            return (
+              <div style={{ textAlign: 'center', margin: '16px 0 0' }}>
+                <button onClick={handleOpenPdf}
+                   className="btn-primary"
+                   style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', fontSize: 13 }}>
+                  <FaFilePdf /> {t('quizcard.viewCourse')} — {quizData.course}
+                </button>
+              </div>
+            );
+          })()
+        )}
+
+        <div className="button-row">
+          {!submitted ? (
+            !studyMode && (
+              <button className="btn-primary" onClick={handleSubmit}
+                disabled={submitting || selected.length === 0}>
+                {submitting ? t('quizcard.submitting') : t('quizcard.submit')}
+              </button>
+            )
+          ) : (
+            <button className="btn-dark" onClick={() => navigate(backTo)}>
+              {t('quizcard.back')}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(QuizCard);

@@ -1,0 +1,221 @@
+.user-management-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: var(--dc-cream);
+    box-sizing: border-box;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+    color: var(--dc-dark);
+    margin: 0;
+  }
+
+  .add-user-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--dc-accent), var(--dc-deep));
+    color: var(--dc-on-accent);
+    border: none;
+    cursor: pointer;
+    border-radius: var(--dc-radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+
+  .search-bar input {
+    padding: 10px 12px;
+    width: 250px;
+    border: 1px solid var(--dc-border);
+    border-radius: 8px;
+    background: var(--dc-white);
+    font-size: 0.9rem;
+  }
+
+  .search-bar svg {
+    color: var(--dc-accent);
+    font-size: 1.1rem;
+  }
+
+  .user-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    border: 1px solid var(--dc-border);
+    background: var(--dc-white);
+  }
+
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+  }
+
+  .user-table thead {
+    background: linear-gradient(135deg, var(--dc-dark), var(--dc-accent));
+  }
+
+  .user-table th {
+    padding: 12px 15px;
+    text-align: left;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .user-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--dc-border);
+    vertical-align: middle;
+    font-size: 0.88rem;
+  }
+
+  .user-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .user-table tbody tr:nth-child(even) {
+    background-color: var(--dc-cream-light);
+  }
+
+  .user-table tbody tr:hover {
+    background-color: rgba(0, 115, 85, 0.08);
+  }
+
+  .user-table td button {
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    margin-right: 10px;
+    color: var(--dc-accent) !important;
+    padding: 4px !important;
+  }
+
+  .user-table td button:hover {
+    color: var(--dc-accent-light) !important;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--dc-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+
+  .modal-content {
+    background-color: var(--dc-white);
+    padding: 30px;
+    border-radius: var(--dc-radius);
+    box-shadow: var(--dc-shadow);
+    width: 400px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--dc-text);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .input-group input, .input-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--dc-border);
+    border-radius: 8px;
+    background: var(--dc-cream-light);
+    box-sizing: border-box;
+    font-size: 0.9rem;
+  }
+
+  .input-group input:focus, .input-group select:focus {
+    border-color: var(--dc-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 115, 85, 0.25);
+  }
+
+  button[type="submit"] {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--dc-accent), var(--dc-deep));
+    color: var(--dc-on-accent);
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  button.close-btn {
+    padding: 10px;
+    background: var(--dc-cream-dark);
+    border: none;
+    color: var(--dc-text);
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .user-management-container {
+      padding: 12px;
+    }
+
+    .header {
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .header h2 {
+      font-size: 1.3rem;
+    }
+
+    .add-user-btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .user-table th,
+    .user-table td {
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+  }

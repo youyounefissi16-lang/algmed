@@ -1,0 +1,140 @@
+:root {
+  --umenu-accent: #0891B2;
+  --umenu-accent-2: #06B6D4;
+}
+
+/* Keep the fixed menu clear of page content (pad the page itself so its
+   own background fills the space instead of the shell's gradient). */
+.user-shell--menu .page-teal,
+.user-shell--menu .dash-root {
+  padding-bottom: 116px;
+}
+
+.umenu-root {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: calc(20px + env(safe-area-inset-left, 0px));
+  z-index: 9300;
+  max-width: calc(100vw - 88px - env(safe-area-inset-left, 0px));
+}
+
+/* ── Collapsed trigger ────────────────────────────── */
+.umenu-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--umenu-accent), var(--umenu-accent-2));
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', var(--dash-font, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--umenu-accent) 38%, transparent), 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.umenu-fab svg {
+  font-size: 1rem;
+}
+
+.umenu-fab:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--umenu-accent) 48%, transparent), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Expanded icon bar ────────────────────────────── */
+.umenu-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--dash-border, rgba(0, 0, 0, 0.06));
+  border-radius: 999px;
+  background: var(--dash-card-bg, #ffffff);
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  transform-origin: left center;
+  animation: umenu-bar-in 0.18s ease;
+}
+
+.umenu-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes umenu-bar-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.umenu-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dash-text-secondary, #475569);
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.umenu-icon-btn:hover {
+  background: color-mix(in srgb, var(--umenu-accent) 12%, transparent);
+  color: var(--umenu-accent);
+  transform: translateY(-1px);
+}
+
+.umenu-icon-btn.active {
+  background: color-mix(in srgb, var(--umenu-accent) 16%, transparent);
+  color: var(--umenu-accent);
+}
+
+.umenu-close {
+  color: var(--dash-text-muted, #94a3b8);
+}
+
+.umenu-premium-icon {
+  color: #f59e0b;
+}
+
+.umenu-premium-icon:hover {
+  background: rgba(245, 158, 11, 0.14);
+  color: #d97706;
+}
+
+.umenu-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 24px;
+  margin: 0 2px;
+  background: var(--dash-border, rgba(0, 0, 0, 0.08));
+}
+
+.umenu-fab:focus-visible,
+.umenu-icon-btn:focus-visible {
+  outline: 2px solid var(--umenu-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umenu-fab,
+  .umenu-icon-btn {
+    transition: none;
+  }
+
+  .umenu-bar {
+    animation: none;
+  }
+}

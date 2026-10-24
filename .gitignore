@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+build/
+
+# Environment — keep .env.example tracked
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+log.txt
+logs/
+
+# Runtime uploads
+uploads/
+.rebuild
+
+# Local data exports
+ins_*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sw?

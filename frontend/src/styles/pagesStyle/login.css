@@ -1,0 +1,177 @@
+.login-page {
+  box-sizing: border-box;
+}
+.login-page *, .login-page *::before, .login-page *::after {
+  box-sizing: border-box;
+}
+.login-page.page-teal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Card */
+.login-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.06);
+  border: 1px solid var(--border-light);
+  width: 420px;
+  max-width: calc(100% - 32px);
+  margin: 24px 16px;
+  padding: 40px 36px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Brand */
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.login-brand svg {
+  color: var(--teal-dark);
+  width: 48px;
+  height: 30px;
+}
+
+.login-brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--teal-dark);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* Form */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-form > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-form .cl-badge,
+.login-form .cl-badgeText,
+.login-form .cl-poweredByKey,
+.login-form .cl-internal-x2bn1y,
+.login-form [class*="cl-developmentMode"] {
+  display: none !important;
+}
+
+/* Forgot password */
+.login-forgot {
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+.login-forgot a {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.login-forgot a:hover {
+  color: var(--teal-dark);
+}
+
+/* Conflict banner */
+.login-conflict {
+  background: rgba(63, 86, 224, 0.06);
+  border: 1px solid rgba(63, 86, 224, 0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--teal-dark);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  width: 100%;
+}
+
+/* Loading states */
+.login-loader {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--teal-dark);
+  animation: login-spin 0.7s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes login-spin {
+  to { transform: rotate(360deg); }
+}
+
+.login-status-text {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.login-status-error {
+  color: var(--color-danger);
+  margin-bottom: 16px;
+}
+
+.login-form .cl-formButtonPrimary {
+  background-color: var(--action-from) !important;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--action-from) 28%, transparent) !important;
+}
+
+/* ── Dark mode ── */
+[data-theme="dark"] .login-brand svg { color: var(--teal-accent); }
+[data-theme="dark"] .login-brand-name { color: var(--teal-accent); }
+[data-theme="dark"] .login-card {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .login-conflict {
+  background: rgba(79, 107, 255, 0.08);
+  border-color: rgba(79, 107, 255, 0.2);
+  color: var(--teal-accent);
+}
+[data-theme="dark"] .login-form .cl-socialButtonsBlockButton {
+  border-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255,255,255,0.05) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .login-form .cl-formFieldInput {
+  border-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255,255,255,0.05) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .login-form .cl-formFieldLabel { color: var(--text-primary) !important; }
+[data-theme="dark"] .login-form .cl-formButtonPrimary {
+  background-color: var(--action-from) !important;
+  color: #FFFFFF !important;
+}
+[data-theme="dark"] .login-form .cl-dividerLine { background-color: rgba(255,255,255,0.1) !important; }
+[data-theme="dark"] .login-form .cl-dividerText { color: var(--text-muted) !important; }
+[data-theme="dark"] .login-form .cl-footerActionLink { color: var(--teal-accent) !important; }
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 28px 20px 24px;
+    border-radius: 16px;
+  }
+  .login-brand-name {
+    font-size: 1.3rem;
+  }
+}

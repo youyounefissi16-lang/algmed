@@ -1,0 +1,97 @@
+.help-heading {
+  font-size: 36px;
+  text-align: center;
+  color: var(--teal-dark);
+  margin-bottom: 32px;
+  font-weight: 800;
+}
+
+.help-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-card);
+}
+
+.help-section h2 {
+  font-size: 18px;
+  color: var(--teal-dark);
+  margin: 0 0 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-section h2 .help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(193, 255, 48, 0.12);
+  flex-shrink: 0;
+}
+
+.help-section p,
+.help-section li {
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.help-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.help-section ul li {
+  padding: 6px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.help-section ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--teal-accent);
+  font-weight: 700;
+}
+
+.help-section a {
+  color: var(--teal-dark);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.help-section a:hover {
+  text-decoration: underline;
+}
+
+.help-faq q {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 12px 0 4px;
+  font-style: normal;
+}
+
+.help-faq q::before {
+  content: 'Q: ';
+  color: var(--teal-accent);
+}
+
+@media (max-width: 768px) {
+  .help-heading {
+    font-size: 28px;
+  }
+  .help-section {
+    padding: 16px;
+  }
+}
