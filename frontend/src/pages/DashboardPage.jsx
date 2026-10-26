@@ -391,12 +391,33 @@ const DashboardPage = () => {
                 <div className="dash-list">
                   {recentQcm.length === 0 && <div className="dash-empty">{t('dashboard.empty.qcm')}</div>}
                   {recentQcm.map((r, i) => {
-                    const quiz = r.quizId || {};
+                    const quizRef = r.quizId;
+                    const quiz = (quizRef && typeof quizRef === 'object') ? quizRef : {};
+                    // `quiz.quizId` is a human label ("Q001"); GET /api/quizzes/:id only
+                    // accepts the ObjectId (`_id`). Fall back to the raw ref when the quiz
+                    // was not populated (deleted quiz returns null and stays unclickable).
+                    const quizDocId = quiz._id || (typeof quizRef === 'string' ? quizRef : null);
+                    const retryState = {
+                      from: '/dashboard',
+                      quizId: quizDocId,
+                      quizName: quiz.question?.questionText || quiz.quizId || undefined,
+                      question: quiz.question,
+                      caseId: quiz.caseId || null,
+                      course: quiz.course || '',
+                      moduleId: quiz.moduleId?._id || quiz.moduleId || null,
+                    };
+                    const openQuiz = () => { if (quizDocId) navigate(`/quiz/${quizDocId}`, { state: retryState }); };
+                    const title = quiz.question?.questionText?.substring(0, 50)
+                      || quiz.quizName
+                      || (quiz.quizId ? `Quiz ${quiz.quizId}` : t('dashboard.empty.qcm'));
                     return (
-                      <div key={r._id || i} className="dash-list-item" role="button" tabIndex={0} onClick={() => quiz.quizId && navigate(`/quiz/${quiz.quizId}`, { state: { from: '/dashboard' } })} onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && quiz.quizId) { e.preventDefault(); navigate(`/quiz/${quiz.quizId}`, { state: { from: '/dashboard' } }); } }}>
+                      <div key={r._id || i} className="dash-list-item" role="button" tabIndex={0}
+                        style={{ cursor: quizDocId ? 'pointer' : 'default' }}
+                        onClick={openQuiz}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openQuiz(); } }}>
                         <div className="dash-item-icon green"><FaClipboardList /></div>
                         <div className="dash-item-info">
-                          <h4>{quiz.question?.questionText?.substring(0, 50) || quiz.quizName || `Quiz #${quiz.quizId || ''}`}</h4>
+                          <h4>{title}</h4>
                           <p>{formatDate(r.timestamp, lang)} · {r.score === 1 ? t('dashboard.result.passed') : t('dashboard.result.review')}</p>
                         </div>
                         <FaChevronRight className="dash-item-arrow" />
