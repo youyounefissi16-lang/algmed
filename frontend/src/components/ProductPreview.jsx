@@ -16,8 +16,8 @@ export default function ProductPreview() {
           <img
             src="/marketing/dashboard.png"
             alt={t('landing.preview.imageAlt')}
-            width="1440"
-            height="1061"
+            width="1882"
+            height="885"
             loading="lazy"
             decoding="async"
           />
