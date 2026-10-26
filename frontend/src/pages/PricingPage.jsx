@@ -167,7 +167,7 @@ const PricingPage = () => {
           {t('pricing.julyReset', { date: formatDate(nextJuly20, lang) })}
         </div>
 
-        <div className="pricing-redeem-section">
+        <div className="pricing-redeem-section" id="redeem">
           <div className="pricing-redeem-icon">&#127934;</div>
           <h2 className="pricing-redeem-title">{t('pricing.redeemTitle')}</h2>
           <p className="pricing-redeem-desc">{t('pricing.redeemDesc')}</p>

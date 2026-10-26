@@ -7,8 +7,10 @@ import CustomizedExamModal from '../components/CustomizedExamModal';
 import CoursePickerModal from '../components/CoursePickerModal';
 import QuizSession from '../components/QuizSession';
 import ModuleProgressIcon from '../components/ModuleProgressIcon';
+import PremiumGate from '../components/PremiumGate';
 import { getModuleQuizProgress } from '../utils/moduleProgress';
 import '../styles/teal-theme.css';
+import '../styles/premiumGate.css';
 import { logger } from '../utils/logger';
 import useDocumentTitle from '../utils/useDocumentTitle';
 
@@ -328,14 +330,15 @@ const QuizPage = () => {
           <h2 style={{ marginBottom: 20 }}>{selectedModule.name}</h2>
 
           {!isSubActive && !subscriptionLoading && !subError && (
-            <div className="gate-banner">
-              <div className="gate-icon">&#128274;</div>
-              <h3>{t('subscription.required.title')}</h3>
-              <p>{t('subscription.required.quizzes')}</p>
-              <div className="gate-cta">
-                <button className="btn-primary" onClick={() => navigate('/pricing')}>{t('subscription.required.cta')}</button>
-              </div>
-            </div>
+            <PremiumGate
+              mode="qcm"
+              moduleName={selectedModule.name}
+              teaser={{
+                items: (selectedModule.courses || []).slice(0, 4).map(c => typeof c === 'string' ? c : c.name).filter(Boolean),
+                more: Math.max(0, (selectedModule.courses || []).length - 4),
+              }}
+              loadingTeaser={loadingCounts}
+            />
           )}
 
           {isSubActive && courses.length === 0 && (
@@ -398,14 +401,18 @@ const QuizPage = () => {
           )}
 
           {!subError && !subscriptionLoading && !isSubActive && (
-            <div className="gate-banner">
-              <div className="gate-icon">&#128274;</div>
-              <h3>{t('subscription.required.title')}</h3>
-              <p>{t('subscription.required.quizzes')}</p>
-              <div className="gate-cta">
-                <button className="btn-primary" onClick={() => navigate('/pricing')}>{t('subscription.required.cta')}</button>
-              </div>
-            </div>
+            <PremiumGate
+              mode="qcm"
+              teaser={{
+                items: filteredModules.slice(0, 4).map(m => m.name),
+                more: Math.max(0, filteredModules.length - 4),
+                stat: t('premiumGate.teaserStat', {
+                  modules: filteredModules.length,
+                  count: Object.values(quizCounts || {}).reduce((sum, c) => sum + (c?.total || 0), 0),
+                }),
+              }}
+              loadingTeaser={loadingCounts}
+            />
           )}
 
         {isSubActive && modulesError && (

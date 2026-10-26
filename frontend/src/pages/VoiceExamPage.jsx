@@ -6,6 +6,7 @@ import VoiceExamSimulation from '../components/VoiceExamSimulation.jsx';
 import EcosCustomizedSetup from '../components/EcosCustomizedSetup';
 import EcosCustomizedSession from '../components/EcosCustomizedSession';
 import PremiumGateModal from '../components/PremiumGateModal';
+import PremiumGate from '../components/PremiumGate';
 import { SkeletonCard } from '../components/LoadingSkeleton';
 import ModuleProgressIcon from '../components/ModuleProgressIcon';
 import { getModuleExamProgress } from '../utils/moduleProgress';
@@ -15,6 +16,7 @@ import { useTranslation } from '../context/LanguageContext';
 import { ECOS_YEARS } from '../constants';
 import { formatYearLabel } from '../utils/formatYear';
 import '../styles/teal-theme.css';
+import '../styles/premiumGate.css';
 
 const VoiceExamPage = () => {
   const { t } = useTranslation();
@@ -296,13 +298,15 @@ const VoiceExamPage = () => {
   if (subscription && noSub) {
     return (
       <div className="page-teal">
-        <div className="card-teal" style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>&#128274;</div>
-          <h3 style={{ color: '#856404', margin: '0 0 8px' }}>{t('subscription.required.title')}</h3>
-          <p style={{ color: '#856404', fontSize: '0.9rem', margin: '0 0 16px' }}>
-            {t('subscription.required.voiceExams')}
-          </p>
-          <button className="btn-primary" onClick={() => navigate('/pricing')}>{t('subscription.required.cta')}</button>
+        <div className="card-teal">
+          <PremiumGate
+            mode="ecos"
+            teaser={{
+              items: modules.slice(0, 4).map(m => m.name),
+              more: Math.max(0, modules.length - 4),
+            }}
+            loadingTeaser={loadingModules}
+          />
         </div>
       </div>
     );
