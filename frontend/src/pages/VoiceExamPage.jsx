@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, fetchWithAuth } from '../config/api';
 import VoiceExam from '../components/VoiceExam.jsx';
 import VoiceExamSimulation from '../components/VoiceExamSimulation.jsx';
@@ -22,6 +22,7 @@ const VoiceExamPage = () => {
   const { t } = useTranslation();
   useDocumentTitle(t('voiceExams.pageTitle'));
   const navigate = useNavigate();
+  const location = useLocation();
   let userDiscipline = '', userYear = ''; try { userDiscipline = localStorage.getItem('userDiscipline') || ''; userYear = localStorage.getItem('userYear') || ''; } catch { /* incognito */ }
   const canAccessEcos = userDiscipline === 'medicine' && ECOS_YEARS.includes(userYear);
 
@@ -151,7 +152,7 @@ const VoiceExamPage = () => {
 
   const completedExamSet = useMemo(() => new Set(completedExamIds.map((id) => String(id))), [completedExamIds]);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${API_BASE_URL}/api/payments/subscription`);
       if (res.ok) {
@@ -162,7 +163,7 @@ const VoiceExamPage = () => {
       }
     } catch { logger.error({}, 'VoiceExamPage checkSubscription failed') }
     return false;
-  };
+  }, []);
 
   const handleExamClick = async (exam) => {
     const hasSub = await checkSubscription();
@@ -220,6 +221,37 @@ const VoiceExamPage = () => {
     setSelectedModuleId('');
     setExams([]);
   };
+
+  // Deep-link retry: the dashboard's "recent ECOS/CROQ" list hands over an exam id,
+  // so we land on that exam's start dialog instead of the generic module list.
+  const pendingExamId = location.state?.examId ? String(location.state.examId) : '';
+  const handledExamRef = useRef(false);
+  useEffect(() => {
+    if (!pendingExamId || handledExamRef.current) return undefined;
+    handledExamRef.current = true;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetchWithAuth(`${API_BASE_URL}/api/voice-exams/${pendingExamId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const exam = await res.json();
+        if (cancelled) return;
+        const mid = exam.moduleId?._id || exam.moduleId || '';
+        if (!mid) return; // orphaned exam — no module to navigate to, fall back to the list
+        setSelectedModule({ _id: mid, name: exam.moduleId?.name || '', year: exam.moduleId?.year });
+        setSelectedModuleId(mid);
+        setView('exams');
+        const hasSub = await checkSubscription();
+        if (cancelled) return;
+        if (!hasSub) { setShowPremiumGate(true); return; }
+        setSetupExam(exam);
+        setExamDuration(10);
+      } catch (err) {
+        logger.error({ err, examId: pendingExamId }, 'VoiceExamPage deep-link retry failed');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [pendingExamId, checkSubscription]);
 
   if (!canAccessEcos) {
     return (

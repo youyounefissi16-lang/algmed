@@ -444,8 +444,13 @@ const DashboardPage = () => {
                     const score = hasCrit
                       ? Math.round(((r.criteriaPassed || 0) / (r.criteriaTotal || 1)) * 100)
                       : (r.overallTotal > 0 ? Math.round((r.overallPassed / r.overallTotal) * 100) : 0);
+                    const examRef = r.examId;
+                    const examDocId = (examRef && typeof examRef === 'object') ? examRef._id : (typeof examRef === 'string' ? examRef : null);
+                    const openEcos = () => navigate('/voice-exams', {
+                      state: { from: '/dashboard', ...(examDocId ? { examId: examDocId } : {}) },
+                    });
                     return (
-                      <div key={r._id || i} className="dash-list-item" role="button" tabIndex={0} onClick={() => navigate('/voice-exams')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/voice-exams'); } }}>
+                      <div key={r._id || i} className="dash-list-item" role="button" tabIndex={0} onClick={openEcos} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEcos(); } }}>
                         <div className="dash-item-icon dark"><FaStethoscope /></div>
                         <div className="dash-item-info">
                           <h4>{r.examId?.title || t('dashboard.voiceExam.title')}</h4>
