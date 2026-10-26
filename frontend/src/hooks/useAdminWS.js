@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { refreshToken, clearToken } from '../utils/tokenStore';
+import { API_BASE_URL } from '../config/api';
 
 const RECONNECT_BASE = 1000;
 const RECONNECT_MAX = 30000;
@@ -14,9 +15,11 @@ export const useAdminWS = () => {
   const cancelledRef = useRef(false);
 
   const connect = () => {
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const host = window.location.host;
-    const wsUrl = `${proto}://${host}/ws/admin`;
+    // The API may live on a different origin than the page (static hosting).
+    // Derive the socket from the API base so /ws/admin always reaches the backend.
+    const apiUrl = new URL(API_BASE_URL || window.location.origin, window.location.origin);
+    const proto = apiUrl.protocol === 'https:' ? 'wss' : 'ws';
+    const wsUrl = `${proto}://${apiUrl.host}/ws/admin`;
 
     refreshToken().then((token) => {
       if (cancelledRef.current || !token) return;
