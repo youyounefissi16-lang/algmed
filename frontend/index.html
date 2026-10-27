@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon-cross.svg" />
@@ -11,8 +11,20 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://algmed.tech" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#070A14" />
+    <meta name="theme-color" content="#ffffff" />
     <title>algmed</title>
+    <script>
+      // Apply the stored theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var dark = localStorage.getItem('darkMode') === 'true';
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+          document.documentElement.classList.toggle('dark-mode', dark);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', dark ? '#060a13' : '#ffffff');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

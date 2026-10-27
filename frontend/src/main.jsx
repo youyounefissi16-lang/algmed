@@ -2,6 +2,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './styles/theme.css'
 import App from './App.jsx'
+// Loaded after App so the editorial layer wins over the legacy page styles.
+import './styles/editorial.css'
 import * as Sentry from '@sentry/react'
 
 if (import.meta.env.VITE_SENTRY_DSN) {
