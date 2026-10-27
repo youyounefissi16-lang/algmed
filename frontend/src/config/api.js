@@ -1,7 +1,8 @@
 import { getToken, refreshToken, clearToken } from '../utils/tokenStore';
 import { logger } from '../utils/logger';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// Trim trailing slashes so a base ending in "/" never yields "//api/..." URLs.
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
 
 export const publicFetch = (path, options = {}) =>
   fetch(/^https?:\/\//.test(path) ? path : `${API_BASE_URL}${path}`, options);

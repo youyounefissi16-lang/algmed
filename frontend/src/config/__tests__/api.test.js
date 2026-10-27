@@ -31,6 +31,13 @@ describe('API_BASE_URL', () => {
   it('reads the base url from env', () => {
     expect(api.API_BASE_URL).toBe('http://api.test');
   });
+
+  it('strips trailing slashes so urls never contain a double slash', async () => {
+    vi.resetModules();
+    vi.stubEnv('VITE_API_BASE_URL', 'https://api.algmed.tech/');
+    const mod = await import('../api');
+    expect(mod.API_BASE_URL).toBe('https://api.algmed.tech');
+  });
 });
 
 describe('authHeaders', () => {
