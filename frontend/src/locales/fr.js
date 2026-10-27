@@ -244,6 +244,7 @@ const fr = {
   'sync.signOut': 'Se déconnecter',
 
   // Login
+  'auth.eyebrow': 'La plateforme',
   'login.title': 'Bon retour',
   'forgotPassword.title': 'Mot de passe oublié',
   'login.subtitle': 'Connectez-vous pour continuer votre parcours.',

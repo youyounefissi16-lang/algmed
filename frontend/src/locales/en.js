@@ -270,6 +270,7 @@ const en = {
   'sync.signOut': 'Sign Out',
 
   // Login
+  'auth.eyebrow': 'The platform',
   'login.title': 'Welcome Back',
   'forgotPassword.title': 'Forgot Password',
   'login.subtitle': 'Sign in to continue your learning journey.',
