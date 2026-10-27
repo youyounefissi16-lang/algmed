@@ -2,23 +2,22 @@
 
 /* ── New Dashboard Layout Variables ───────────────── */
 :root {
-  --dash-bg: light-dark(var(--teal-light, #EEF1FF), #070A14);
-  --dash-card-bg: light-dark(#ffffff, #0E1424);
-  --dash-card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
-  --dash-card-hover-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  --dash-text-primary: light-dark(#0F172A, #f1f5f9);
-  --dash-text-secondary: light-dark(#475569, #cbd5e1);
-  --dash-text-muted: light-dark(#94a3b8, #64748b);
-  --dash-accent: var(--teal-accent, #4F6BFF);
-  --dash-border: light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.07));
-  --dash-section-gap: 28px;
-  --dash-transition: 0.25s ease;
-  --dash-font: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
-}
-
-[data-theme="dark"] {
-  --dash-card-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.3);
-  --dash-card-hover-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --dash-bg: var(--ed-surface-2);
+  --dash-card-bg: var(--ed-surface);
+  --dash-card-shadow: var(--ed-shadow);
+  --dash-card-hover-shadow: var(--ed-shadow-lg);
+  --dash-text-primary: var(--ed-ink);
+  --dash-text-secondary: var(--ed-ink-2);
+  --dash-text-muted: var(--ed-muted);
+  --dash-accent: var(--ed-accent);
+  --dash-accent-soft: var(--ed-accent-soft);
+  --dash-on-accent: var(--ed-on-accent);
+  --dash-border: var(--ed-line);
+  --dash-line-strong: var(--ed-line-strong);
+  --dash-section-gap: 26px;
+  --dash-transition: 0.2s ease;
+  --dash-font: var(--ed-font-body);
+  --dash-display: var(--ed-font-display);
 }
 
 /* ── Dashboard layout root ────────────────────────── */
@@ -54,36 +53,12 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(
-    120deg,
-    rgba(245, 255, 250, 0.94) 0%,
-    rgba(245, 255, 250, 0.76) 34%,
-    rgba(220, 252, 231, 0.56) 62%,
-    rgba(167, 243, 208, 0.4) 100%
-  );
-  -webkit-mask-image: url('/logo-mark.svg');
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: min(52vw, 520px) auto;
-  mask-image: url('/logo-mark.svg');
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: min(52vw, 520px) auto;
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  backdrop-filter: blur(10px) saturate(140%);
-  opacity: 0.62;
+  background: radial-gradient(60% 45% at 82% -10%, var(--ed-glow) 0%, transparent 70%);
 }
 
 [data-theme="dark"] .user-shell--menu .page-teal::before,
 [data-theme="dark"] .user-shell--menu .dash-root::before {
-  background: linear-gradient(
-    120deg,
-    rgba(15, 76, 76, 0.94) 0%,
-    rgba(15, 76, 76, 0.78) 34%,
-    rgba(17, 94, 89, 0.62) 62%,
-    rgba(19, 78, 74, 0.46) 100%
-  );
-  opacity: 0.62;
+  background: radial-gradient(60% 45% at 82% -10%, var(--ed-glow) 0%, transparent 70%);
 }
 
 /* ── Top bar ───────────────────────────────────────── */
@@ -166,11 +141,11 @@
 .dash-top-avatar {
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: var(--teal-dark, #3F56E0);
+  background: var(--ed-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--ed-on-primary);
   font-size: 0.75rem;
 }
 
@@ -206,11 +181,13 @@
 }
 
 .dash-hero-welcome h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-family: var(--dash-display);
+  font-size: 2.05rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
   margin: 0 0 4px;
   color: var(--dash-text-primary);
-  font-family: var(--dash-font);
 }
 
 .dash-hero-accent {
@@ -292,12 +269,13 @@
 }
 
 .dash-section-header h2 {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-family: var(--dash-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: -0.012em;
   margin: 0;
   min-width: 0;
   color: var(--dash-text-primary);
-  font-family: var(--dash-font);
 }
 
 .dash-view-all {
@@ -317,12 +295,9 @@
   transition: all 0.2s;
 }
 .dash-view-all:hover {
-  background-image: linear-gradient(90deg, var(--action-from), var(--action-to), var(--action-from));
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: flow 6s linear infinite;
+  color: var(--dash-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ── Modules carousel ─────────────────────────────── */
@@ -351,7 +326,7 @@
   aspect-ratio: 2 / 1;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
-  background: linear-gradient(135deg, var(--m-from, var(--dash-accent)), var(--m-to, #7c5cff));
+  background: linear-gradient(135deg, var(--m-from, var(--dash-accent)), var(--m-to, var(--ed-accent-bright)));
   border: none;
   border-radius: 14px;
   overflow: hidden;
@@ -369,7 +344,7 @@
   inset: 0;
   background:
     radial-gradient(125% 125% at 85% 12%, var(--m-glow, rgba(255, 255, 255, 0.25)), transparent 62%),
-    linear-gradient(135deg, var(--m-from, var(--dash-accent)), var(--m-to, #7c5cff));
+    linear-gradient(135deg, var(--m-from, var(--dash-accent)), var(--m-to, var(--ed-accent-bright)));
   opacity: 0.62;
   pointer-events: none;
   z-index: 1;
@@ -491,7 +466,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid var(--dash-border);
   background: var(--dash-card-bg);
   color: var(--dash-text-primary);
   font-size: 1.2rem;
@@ -501,29 +476,17 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: var(--dash-card-shadow);
-  transition: all 0.2s;
+  transition: border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
   opacity: 0;
   padding: 0;
-}
-.dash-carousel-arrow::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: conic-gradient(from var(--a), var(--action-from), var(--action-to), var(--action-from), var(--action-to), var(--action-from));
-  padding: 2px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  animation: conic-spin 4s linear infinite;
 }
 .dash-carousel-section:hover .dash-carousel-arrow {
   opacity: 0.85;
 }
 .dash-carousel-arrow:hover {
   opacity: 1;
-  box-shadow: var(--dash-card-hover-shadow);
+  border-color: var(--dash-accent);
+  color: var(--dash-accent);
 }
 .dash-carousel-arrow.left {
   left: 4px;
@@ -573,33 +536,18 @@
 }
 
 .dash-empty-cta {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--action-from), var(--action-to), var(--action-from));
-  background-size: 200% auto;
-  animation: flow 6s linear infinite;
-  color: #fff;
+  background: var(--ed-primary);
+  color: var(--ed-on-primary);
   border: none;
   padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: 9px;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--action-from) 27%, transparent);
-}
-.dash-empty-cta::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, #ffffff80 50%, transparent 60%);
-  transform: translateX(-100%) skewX(-18deg);
-  animation: shine 3.5s ease-in-out infinite;
-  pointer-events: none;
-  border-radius: 8px;
+  transition: opacity 0.2s ease;
 }
 .dash-empty-cta:hover {
-  box-shadow: 0 6px 28px color-mix(in srgb, var(--action-from) 40%, transparent);
+  opacity: 0.92;
 }
 
 /* ── Activity split ───────────────────────────────── */
@@ -650,17 +598,13 @@
 }
 
 .dash-item-icon.green {
-  background: color-mix(in srgb, var(--action-from) 10%, transparent);
+  background: var(--dash-accent-soft);
   color: var(--dash-accent);
 }
 
 .dash-item-icon.dark {
-  background: light-dark(color-mix(in srgb, var(--action-from) 8%, transparent), rgba(242, 245, 255, 0.06));
-  color: var(--teal-dark, #3F56E0);
-}
-
-[data-theme="dark"] .dash-item-icon.dark {
-  color: var(--teal-light, #EEF1FF);
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent);
 }
 
 .dash-item-info {
@@ -717,34 +661,14 @@
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s ease, transform 0.2s ease;
   box-shadow: var(--dash-card-shadow);
   position: relative;
 }
 
-.dash-action-card::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: conic-gradient(from var(--a), var(--action-from), var(--action-to), var(--action-from), var(--action-to), var(--action-from));
-  padding: 2px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
-  animation: conic-spin 4s linear infinite;
-}
-
-.dash-action-card:hover::before {
-  opacity: 1;
-}
-
 .dash-action-card:hover {
-  box-shadow: var(--dash-card-hover-shadow);
-  transform: translateX(2px);
+  border-color: var(--dash-line-strong);
+  transform: translateY(-1px);
 }
 
 .dash-action-header {
@@ -764,26 +688,18 @@
 }
 
 .dash-action-badge.green {
-  background: color-mix(in srgb, var(--action-from) 10%, transparent);
+  background: var(--dash-accent-soft);
   color: var(--dash-accent);
 }
 
 .dash-action-badge.dark {
-  background: light-dark(color-mix(in srgb, var(--action-from) 8%, transparent), rgba(242, 245, 255, 0.06));
-  color: var(--teal-dark, #3F56E0);
-}
-
-[data-theme="dark"] .dash-action-badge.dark {
-  color: var(--teal-light, #EEF1FF);
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent);
 }
 
 .dash-action-badge.blue {
-  background: light-dark(color-mix(in srgb, var(--action-from) 6%, transparent), rgba(242, 245, 255, 0.06));
-  color: var(--teal-dark, #3F56E0);
-}
-
-[data-theme="dark"] .dash-action-badge.blue {
-  color: var(--teal-light, #EEF1FF);
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent);
 }
 
 .dash-action-info {
@@ -813,8 +729,8 @@
 
 /* ── Upgrade banner ───────────────────────────────── */
 .dash-upgrade {
-  background: linear-gradient(135deg, rgba(255,82,5,0.08), rgba(255,82,5,0.03));
-  border: 1px solid light-dark(rgba(255,82,5,0.15), rgba(255,82,5,0.15));
+  background: var(--dash-accent-soft);
+  border: 1px solid transparent;
   border-radius: 10px;
   padding: 12px 16px;
   display: flex;
@@ -825,35 +741,21 @@
 }
 
 .dash-upgrade-btn {
-  position: relative;
-  overflow: hidden;
   margin-left: auto;
   padding: 6px 16px;
-  border-radius: 6px;
+  border-radius: 7px;
   border: none;
-  background: linear-gradient(90deg, var(--action-from), var(--action-to), var(--action-from));
-  background-size: 200% auto;
-  animation: flow 6s linear infinite;
-  color: #fff;
+  background: var(--ed-primary);
+  color: var(--ed-on-primary);
   font-weight: 600;
   font-size: 0.75rem;
   cursor: pointer;
   font-family: var(--dash-font);
   white-space: nowrap;
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--action-from) 27%, transparent);
-}
-.dash-upgrade-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, #ffffff80 50%, transparent 60%);
-  transform: translateX(-100%) skewX(-18deg);
-  animation: shine 3.5s ease-in-out infinite;
-  pointer-events: none;
-  border-radius: 6px;
+  transition: opacity 0.2s ease;
 }
 .dash-upgrade-btn:hover {
-  box-shadow: 0 6px 28px color-mix(in srgb, var(--action-from) 40%, transparent);
+  opacity: 0.9;
 }
 
 /* ── Empty state ──────────────────────────────────── */

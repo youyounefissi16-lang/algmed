@@ -527,8 +527,8 @@ const DashboardPage = () => {
               <button
                 type="button"
                 onClick={() => navigate('/quizPage')}
-                className="mt-3 w-full rounded-lg px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, var(--action-from), var(--action-to))' }}
+                className="mt-3 w-full rounded-lg px-3 py-2 text-sm font-medium transition-opacity hover:opacity-90"
+                style={{ background: 'var(--ed-primary)', color: 'var(--ed-on-primary)' }}
               >
                 {t('rail.today.cta')}
               </button>

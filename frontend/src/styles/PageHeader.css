@@ -15,7 +15,7 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--dash-text);
+  color: var(--dash-text-primary, var(--text-dark));
 }
 
 .page-header-subtitle {

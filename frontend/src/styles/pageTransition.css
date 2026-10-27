@@ -8,8 +8,8 @@
   height: 40px;
   margin: -20px 0 0 -20px;
   border-radius: 50%;
-  background: var(--dash-bg, #eef1ff);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--umenu-accent, #4f6bff) 14%, transparent);
+  background: var(--dash-bg, var(--ed-surface-2, #f6f8fb));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--umenu-accent, #0891b2) 14%, transparent);
   transform: scale(0);
   transform-origin: center;
   will-change: transform, opacity;
