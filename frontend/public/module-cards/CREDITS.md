@@ -22,8 +22,9 @@ All images are stored locally so the dashboard makes no third-party image reques
 - `oncology.jpg` - Unsplash / National Cancer Institute, oncology consultation: https://unsplash.com/photos/DK--4VWK1tw
 - `pediatrics.jpg` - Unsplash, pediatric examination: https://unsplash.com/photos/QY8-IuUV3wk
 - `pharmacy.jpg` - Unsplash, medicine blister packs: https://images.unsplash.com/photo-1584308666744-24d5c474f2ae
-- `pregnancy.jpg` - Pexels, pregnancy ultrasound: https://www.pexels.com/photo/7089333/
+- `pregnancy.jpg` - Wikimedia Commons, obstetric ultrasound monitor (20-week fetus), Goleisureintl, CC BY 4.0: https://commons.wikimedia.org/wiki/File:Obstetric_ultrasound_scan_monitor_showing_20-week_human_fetus_profile_in_Navi_Mumbai_2015.jpg
+- `ophthalmology.jpg` - Wikimedia Commons, US Navy slit-lamp eye exam, Public domain: https://commons.wikimedia.org/wiki/File:US_Navy_090901-N-5617R-056_Navy_optometrist_Lt._Thuong_Le,_from_Dallas,_administers_a_slit_lamp_eye_exam_to_Ship%27s_Serviceman_Seaman_Alfernan_Fernandez_at_Branch_Medical_Clinic_Naval_Base_San_Diego.jpg
 - `public-health.jpg` - Unsplash / CDC, vaccination care: https://unsplash.com/photos/Jusy7vxGPLM
 - `surgery.jpg` - Unsplash, surgical team: https://images.unsplash.com/photo-1551601651-2a8555f1a136
 
-Unsplash images are used under the Unsplash License. Pexels images are used under the Pexels License. The Commons image is CC0.
+Unsplash images are used under the Unsplash License. Pexels images are used under the Pexels License. Commons images are CC0, CC BY 4.0 or public domain, as noted per file.

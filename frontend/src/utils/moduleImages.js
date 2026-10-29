@@ -27,6 +27,8 @@ const keyMap = [
   ['phytochimie', 'botany'],
   ['hematopoietique', 'hematology'],
   ['onco hematologie', 'hematology'],
+  ['ophtalmologie', 'ophthalmology'],
+  ['ophtalmo', 'ophthalmology'],
   ['endocrinologie', 'clinical'],
   ['endocrinien', 'clinical'],
   ['ophtalmologie', 'clinical'],
